@@ -93,13 +93,13 @@ export function collectUniqueLanguages(ability: IAbility) {
 }
 
 export function languagesSQLStatements(language: Set<string>) {
-  const sqlStrings: string[] = [];
+  const sqlStrings: Set<string> = new Set<string>();
   language.forEach((language) => {
     const insertLanguage = `
         INSERT INTO LANGUAGES (language)
         VALUES ('${language}');\n
         `;
-    sqlStrings.push(insertLanguage);
+    sqlStrings.add(insertLanguage);
     logger.info(`Language ${language} added to the SQL statements`);
   });
   return sqlStrings;
@@ -109,7 +109,7 @@ export function alternativeNamesSQLStatements(
   languages: string[],
   abilities: IAbility[]
 ) {
-  const sqlStrings: string[] = [];
+  const sqlStrings: Set<string> = new Set<string>();
   abilities.forEach((ability) => {
     ability.names.forEach((name) => {
       const insertName = `
@@ -119,7 +119,7 @@ export function alternativeNamesSQLStatements(
         name.language
       )}, '${ability.id}');\n
         `;
-      sqlStrings.push(insertName);
+      sqlStrings.add(insertName);
       logger.info(`Alternative name ${name.name} added to the SQL statements`);
     });
   });
@@ -130,7 +130,7 @@ export function abilitiesSQLStatements(
   abilities: IAbility[],
   generations: IGeneration[]
 ) {
-  const sqlStrings: string[] = [];
+  const sqlStrings: Set<string> = new Set<string>();
   abilities.forEach((ability) => {
     var generation_id: number;
     generations.forEach((generation) => {
@@ -140,7 +140,7 @@ export function abilitiesSQLStatements(
           INSERT INTO ABILITIES (id, name, generation_id)
           VALUES ('${ability.id}', '${ability.name}', '${generation_id}');\n
           `;
-        sqlStrings.push(insertAbility);
+        sqlStrings.add(insertAbility);
         logger.info(`Ability ${ability.id} - ${ability.name} added to the SQL statements`);
       }
     });
@@ -152,7 +152,7 @@ export function effectSQLStatements(
   abilities: IAbility[],
   languages: string[]
 ) {
-  const sqlStrings: string[] = [];
+  const sqlStrings: Set<string> = new Set<string>();
   abilities.forEach((ability) => {
     ability.effect.forEach((effect) => {
       const insertEffect = `
@@ -162,7 +162,7 @@ export function effectSQLStatements(
         effect.language
       )});\n
         `;
-      sqlStrings.push(insertEffect);
+      sqlStrings.add(insertEffect);
       logger.info(`Effect ${effect.effect} added to the SQL statements`);
     });
   });
