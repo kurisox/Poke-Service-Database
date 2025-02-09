@@ -168,3 +168,24 @@ export function effectSQLStatements(
   });
   return sqlStrings;
 }
+
+export function flavourTextSqlStatements(
+  abilities: IAbility[],
+  languages: string[]
+) {
+  const sqlStrings: Set<string> = new Set<string>();
+  abilities.forEach((ability) => {
+    ability.flavour_text.forEach((flavour_text) => {
+      const insertFlavourText = `
+        INSERT INTO FLAVOUR_TEXTS (flavour_text, ability_id, language_id)
+        VALUES ('${flavour_text.flavour_text}', ${ability.id}, ${getLanguageID(
+        languages,
+        flavour_text.language
+      )});\n
+        `;
+      sqlStrings.add(insertFlavourText);
+      logger.info(`Flavour text ${flavour_text.flavour_text} added to the SQL statements`);
+    });
+  });
+  return sqlStrings;
+}
