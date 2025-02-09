@@ -1,10 +1,15 @@
 -- SQL initialization script
-
-
 -- Creates table for generation in which the pokemon was introduced
 CREATE TABLE
     IF NOT EXISTS GENERATRIONS (
         id INT AUTO_INCREMENT PRIMARY KEY,
+        type VARCHAR(255) NOT NULL
+    );
+
+-- Create table for pokemon types
+CREATE TABLE
+    IF NOT EXISTS TYPES (
+        id INT PRIMARY KEY NOT NULL,
         type VARCHAR(255) NOT NULL
     );
 
@@ -26,12 +31,11 @@ CREATE TABLE
 
 CREATE TABLE
     IF NOT EXISTS ABILITIES (
-        id INT PRIMARY KEY,
+        id INT PRIMARY KEY NOT NULL,
         name VARCHAR(255) NOT NULL,
         generation_id INT NOT NULL,
         FOREIGN KEY (generation_id) REFERENCES GENERATRIONS (id)
     );
-
 
 CREATE TABLE
     IF NOT EXISTS EFFECTS (
@@ -49,4 +53,13 @@ Create table
         ability_id INT NOT NULL,
         language_id INT NOT NULL,
         FOREIGN KEY (ability_id) REFERENCES ABILITIES (id) FOREIGN KEY (language_id) REFERENCES LANGUAGES (id)
-    );
+    )
+-- join tables
+
+Create table
+    if not exists NO_DAMAGE_TO (
+        type_id INT PRIMARY KEY NOT NULL,
+        no_dmg_type_id INT PRIMARY KEY NOT NULL,
+        FOREIGN KEY (id_type) REFERENCES TYPES (id) FOREIGN KEY (id_weakness) REFERENCES TYPES (id)
+    )
+
