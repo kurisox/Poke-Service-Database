@@ -1,4 +1,13 @@
 -- SQL initialization script
+
+
+-- Creates table for generation in which the pokemon was introduced
+CREATE TABLE
+    IF NOT EXISTS GENERATRIONS (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        type VARCHAR(255) NOT NULL
+    );
+
 -- Create teable for the pokemon abilities and sub-information 
 CREATE TABLE
     IF NOT EXISTS LANGUAGES (
@@ -23,11 +32,6 @@ CREATE TABLE
         FOREIGN KEY (generation_id) REFERENCES GENERATRIONS (id)
     );
 
-CREATE TABLE
-    IF NOT EXISTS GENERATRIONS (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        type VARCHAR(255) NOT NULL
-    );
 
 CREATE TABLE
     IF NOT EXISTS EFFECTS (
