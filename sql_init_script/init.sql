@@ -41,7 +41,7 @@ CREATE TABLE
 Create table
     if not exists FLAVOUR_TEXT (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
+        flavour_text VARCHAR(255) NOT NULL,
         ability_id INT NOT NULL,
         language_id INT NOT NULL,
         FOREIGN KEY (ability_id) REFERENCES ABILITIES (id) FOREIGN KEY (language_id) REFERENCES LANGUAGES (id)
