@@ -1,6 +1,7 @@
 import axios from "axios";
 import log4js, { Logger } from "log4js";
 import { IGeneration } from "./IGeneration";
+import { log } from "console";
 
 const logger: Logger = log4js.getLogger("generations.ts");
 logger.level = "info";
@@ -29,11 +30,12 @@ export async function fetchGenerations() {
 }
 
 export function generationSQLStatements(generations: IGeneration[]) {
-  const sqlStatements: string[] = [];
+  const sqlStatements: Set<string> = new Set(); 
   generations.forEach((generation: IGeneration) => {
-    sqlStatements.push(
+    sqlStatements.add(
       `INSERT INTO generations (id, name) VALUES (${generation.id}, '${generation.name}');\n`
     );
+    logger.info(`Added generation ${generation.name} to SQL statements`);
   });
   return sqlStatements;
 }
