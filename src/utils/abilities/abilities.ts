@@ -2,6 +2,7 @@ import axios from "axios";
 import log4js, { Logger } from "log4js";
 import { IAbility } from "./IAbility";
 import { IGeneration } from "../generations/IGeneration";
+import { log } from "console";
 
 const logger: Logger = log4js.getLogger("abilities.ts");
 logger.level = "info";
@@ -99,26 +100,27 @@ export function languagesSQLStatements(language: Set<string>) {
         VALUES ('${language}');\n
         `;
     sqlStrings.push(insertLanguage);
+    logger.info(`Language ${language} added to the SQL statements`);
   });
   return sqlStrings;
 }
 
 export function alternativeNamesSQLStatements(
-  language: Set<String>,
+  languages: string[],
   abilities: IAbility[]
 ) {
   const sqlStrings: string[] = [];
-  const languageArray = Array.from(language);
   abilities.forEach((ability) => {
     ability.names.forEach((name) => {
       const insertName = `
             INSERT INTO ALTERNATIVE_ABILITY_NAMES (name, language_id, ability_id)
             VALUES ('${name.name}', ${getLanguageID(
-        languageArray,
+        languages,
         name.language
       )}, '${ability.id}');\n
         `;
       sqlStrings.push(insertName);
+      logger.info(`Alternative name ${name.name} added to the SQL statements`);
     });
   });
   return sqlStrings;
@@ -139,7 +141,29 @@ export function abilitiesSQLStatements(
           VALUES ('${ability.id}', '${ability.name}', '${generation_id}');\n
           `;
         sqlStrings.push(insertAbility);
+        logger.info(`Ability ${ability.id} - ${ability.name} added to the SQL statements`);
       }
+    });
+  });
+  return sqlStrings;
+}
+
+export function effectSQLStatements(
+  abilities: IAbility[],
+  languages: string[]
+) {
+  const sqlStrings: string[] = [];
+  abilities.forEach((ability) => {
+    ability.effect.forEach((effect) => {
+      const insertEffect = `
+        INSERT INTO EFFECTS (effect, ability_id, language_id)
+        VALUES ('${effect.effect}', ${ability.id}, ${getLanguageID(
+        languages,
+        effect.language
+      )});\n
+        `;
+      sqlStrings.push(insertEffect);
+      logger.info(`Effect ${effect.effect} added to the SQL statements`);
     });
   });
   return sqlStrings;
