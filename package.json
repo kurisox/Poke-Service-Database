@@ -1,11 +1,11 @@
 {
   "name": "database_init",
   "version": "1.0.0",
-  "main": "init.ts",
+  "main": "./sql_init_script/init.ts",
   "type":"module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node --loader ts-node/esm init.ts"
+    "dev": "node --loader ts-node/esm ./sql_init_script/init.ts"
   },
   "keywords": [],
   "author": "",
