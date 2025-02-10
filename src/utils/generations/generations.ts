@@ -33,7 +33,7 @@ export function generationSQLStatements(generations: IGeneration[]) {
   const sqlStatements: Set<string> = new Set(); 
   generations.forEach((generation: IGeneration) => {
     sqlStatements.add(
-      `INSERT INTO generations (id, name) VALUES (${generation.id}, '${generation.name}');\n`
+      `INSERT INTO GENERATIONS (id, name) VALUES (${generation.id}, '${generation.name}');\n`
     );
     logger.info(`Added generation ${generation.name} to SQL statements`);
   });
