@@ -2,7 +2,6 @@ import axios from "axios";
 import log4js, { Logger } from "log4js";
 import { IAbility } from "./IAbility";
 import { IGeneration } from "../generations/IGeneration";
-import { log } from "console";
 
 const logger: Logger = log4js.getLogger("abilities.ts");
 logger.level = "info";
@@ -54,12 +53,13 @@ async function fetchAbility(abilityID: number) {
   }
 }
 
-function getLanguageID(languageArray: String[], language: String) {
+function getLanguageID(languageArray: String[], language: String): number {
   for (let i = 0; i < languageArray.length; i++) {
     if (language === languageArray[i]) {
       return i + 1;
     }
   }
+  return languageArray.length + 1;
 }
 
 export async function fetchAbilities() {
@@ -102,6 +102,11 @@ export function languagesSQLStatements(language: Set<string>) {
     sqlStrings.add(insertLanguage);
     logger.info(`Language ${language} added to the SQL statements`);
   });
+  const insertLanguage = `
+        INSERT INTO LANGUAGES (language)
+        VALUES ('null');\n
+        `;
+  sqlStrings.add(insertLanguage);
   return sqlStrings;
 }
 
@@ -117,7 +122,7 @@ export function alternativeNamesSQLStatements(
             VALUES ('${name.name}', ${getLanguageID(
         languages,
         name.language
-      )}, '${ability.id}');\n
+      )}, ${ability.id});\n
         `;
       sqlStrings.add(insertName);
       logger.info(`Alternative name ${name.name} added to the SQL statements`);
@@ -138,10 +143,12 @@ export function abilitiesSQLStatements(
         generation_id = generation.id;
         const insertAbility = `
           INSERT INTO ABILITIES (id, name, generation_id)
-          VALUES ('${ability.id}', '${ability.name}', '${generation_id}');\n
+          VALUES (${ability.id}, '${ability.name}', ${generation_id});\n
           `;
         sqlStrings.add(insertAbility);
-        logger.info(`Ability ${ability.id} - ${ability.name} added to the SQL statements`);
+        logger.info(
+          `Ability ${ability.id} - ${ability.name} added to the SQL statements`
+        );
       }
     });
   });
@@ -157,10 +164,9 @@ export function effectSQLStatements(
     ability.effect.forEach((effect) => {
       const insertEffect = `
         INSERT INTO EFFECTS (effect, ability_id, language_id)
-        VALUES ('${effect.effect}', ${ability.id}, ${getLanguageID(
-        languages,
-        effect.language
-      )});\n
+        VALUES ('${effect.effect.replace(/'/g, "''")}', ${
+        ability.id
+      }, ${getLanguageID(languages, effect.language)});\n
         `;
       sqlStrings.add(insertEffect);
       logger.info(`Effect ${effect.effect} added to the SQL statements`);
@@ -178,13 +184,15 @@ export function flavourTextSqlStatements(
     ability.flavour_text.forEach((flavour_text) => {
       const insertFlavourText = `
         INSERT INTO FLAVOUR_TEXTS (flavour_text, ability_id, language_id)
-        VALUES ('${flavour_text.flavour_text}', ${ability.id}, ${getLanguageID(
+        VALUES ('${flavour_text.flavour_text.replace(/'/g, "''")}', ${ability.id}, ${getLanguageID(
         languages,
         flavour_text.language
       )});\n
         `;
       sqlStrings.add(insertFlavourText);
-      logger.info(`Flavour text ${flavour_text.flavour_text} added to the SQL statements`);
+      logger.info(
+        `Flavour text ${flavour_text.flavour_text} added to the SQL statements`
+      );
     });
   });
   return sqlStrings;
