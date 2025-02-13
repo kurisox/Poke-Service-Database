@@ -3,6 +3,22 @@ CREATE DATABASE IF NOT EXISTS poke_service_db;
 
 USE poke_service_db;
 
+-- Create for the aviable languages 
+CREATE TABLE
+    IF NOT EXISTS LANGUAGES (
+        id INT AUTO_INCREMENT,
+        language VARCHAR(10) NOT NULL,
+        primary key (id)
+    );
+
+-- Create table for the available generations
+CREATE TABLE
+    IF NOT EXISTS TYPES (
+        id INT NOT NULL,
+        name VARCHAR(20) NOT NULL,
+        primary key (id)
+    );
+
 -- Creates table for generation in which the pokemon was introduced
 CREATE TABLE
     IF NOT EXISTS GENERATIONS (
@@ -11,19 +27,11 @@ CREATE TABLE
         primary key (id)
     );
 
--- Create table for pokemon types
 CREATE TABLE
-    IF NOT EXISTS TYPES (
+    IF NOT EXISTS ABILITIES (
         id INT NOT NULL,
-        type VARCHAR(255) NOT NULL,
-        primary key (id)
-    );
-
--- Create teable for the pokemon abilities and sub-information 
-CREATE TABLE
-    IF NOT EXISTS LANGUAGES (
-        id INT AUTO_INCREMENT,
-        language VARCHAR(10) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        generation_id INT NOT NULL,
         primary key (id)
     );
 
@@ -36,13 +44,6 @@ CREATE TABLE
         primary key (id)
     );
 
-CREATE TABLE
-    IF NOT EXISTS ABILITIES (
-        id INT NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        generation_id INT NOT NULL,
-        primary key (id)
-    );
 
 CREATE TABLE
     IF NOT EXISTS EFFECTS (
@@ -143,3 +144,5 @@ alter table HALF_DAMAGE_FROM add constraint `HALF_DAMAGE_FROM_TYPES2` foreign ke
 alter table DOUBLE_DAMAGE_FROM add constraint `DOUBLE_DAMAGE_FROM_TYPES` foreign key (type_id) references TYPES (id) on delete cascade;
 
 alter table DOUBLE_DAMAGE_FROM add constraint `DOUBLE_DAMAGE_FROM_TYPES2` foreign key (reference_type_id) references TYPES (id) on delete cascade;
+
+-- values
