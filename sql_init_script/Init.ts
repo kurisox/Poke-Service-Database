@@ -6,13 +6,15 @@ import log4js, { Logger } from "log4js";
 import LanguagesProvider from "../src/utils/languages/LanguagesProvider.ts";
 import GenerationProvider from "../src/utils/generations/GenerationsProvider.ts";
 import TypeProvider from "../src/utils/types/TypeProvider.ts";
+import IFetching from "../src/utils/interfaces/IDataServer.ts";
 
 class Init {
   private logger: Logger;
-  private __filename: string;
-  private __dirname: string;
-  private initSqlPath: string;
+  private readonly __filename = fileURLToPath(import.meta.url);
+  private readonly __dirname = path.dirname(this.__filename);
+  private readonly initSqlPath = path.join(this.__dirname, "init.sql");
   private sqlStatements: string[];
+  private objects: IFetching<any>[];
   private languagesProvider: LanguagesProvider;
   private generationProvider: GenerationProvider;
   private typeProvider: TypeProvider;
@@ -24,16 +26,20 @@ class Init {
     this.__dirname = path.dirname(this.__filename);
     this.initSqlPath = path.join(this.__dirname, "init.sql");
     this.sqlStatements = [];
+    this.objects = [];
     this.languagesProvider = new LanguagesProvider();
     this.generationProvider = new GenerationProvider();
     this.typeProvider = new TypeProvider();
+    this.objects.push(this.languagesProvider);
+    this.objects.push(this.generationProvider);
+    this.objects.push(this.typeProvider);
   }
 
   private async prepareData() {
     try {
-      await this.languagesProvider.fetchAllData();
-      await this.generationProvider.fetchAllData();
-      await this.typeProvider.fetchAllData();
+      this.objects.forEach(element => {
+        element.fetchAllData();
+      });
     } catch (error) {
       this.logger.error(`Error preparing data: ${error}`);
     }

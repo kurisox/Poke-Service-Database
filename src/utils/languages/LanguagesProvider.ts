@@ -1,11 +1,10 @@
 import axios from "axios";
 import log4js, { Logger } from "log4js";
 import LanguageData from "./LanguageData";
-import ISQL from "../interfaces/ISQL";
-import IFetching from "../interfaces/IFechting";
+import IDataServer from "../interfaces/IDataServer";
 
 export default class LanguagesProvider
-  implements IFetching<LanguageData>, ISQL<LanguageData>
+  implements IDataServer<LanguageData>
 {
   private logger: Logger;
   private languageArray: LanguageData[];

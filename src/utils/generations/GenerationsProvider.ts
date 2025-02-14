@@ -1,11 +1,10 @@
 import axios from "axios";
 import log4js, { Logger } from "log4js";
 import GenerationData from "./GenerationData";
-import ISQL from "../interfaces/ISQL";
-import IFetching from "../interfaces/IFechting";
+import IDataServer from "../interfaces/IDataServer";
 
 export default class GenerationsProvider
-  implements IFetching<GenerationData>, ISQL<GenerationData>
+  implements IDataServer<GenerationData>
 {
   private logger: Logger;
   private generationArray: GenerationData[];

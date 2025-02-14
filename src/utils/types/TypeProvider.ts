@@ -1,12 +1,11 @@
 import axios from "axios";
 import log4js, { Logger } from "log4js";
-import ISQL from "../interfaces/ISQL";
-import IFetching from "../interfaces/IFechting";
+import IDataServer from "../interfaces/IDataServer";
 import TypeData from "./TypeData";
 import DamageRelationsData, { DamageRelationData } from "./DamageRelationsData";
 
 export default class TypeProvider
-  implements IFetching<TypeData>, ISQL<TypeData>
+  implements IDataServer<TypeData>
 {
   private logger: Logger;
   private typeArray: TypeData[];
