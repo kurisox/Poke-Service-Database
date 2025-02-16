@@ -58,11 +58,12 @@ export default class PokemonProvider implements IDataServer<PokemonData> {
         url: data.sprites.other["official-artwork"].front_shiny,
       },
     ];
+
     const pokemon: PokemonData = PokemonData.Builder.setId(this.ID)
       .setName(data.name)
       .setHeight(data.height)
       .setWeight(data.weight)
-      .setAbilities(data.abilities.map((ability: any) => ability.ability.name))
+      .setAbilities(Array.from(new Set(data.abilities.map((ability: any) => ability.ability.name))))
       .setTypes(data.types.map((type: any) => type.type.name))
       .setSprites(sprites)
       .build();
@@ -108,7 +109,7 @@ export default class PokemonProvider implements IDataServer<PokemonData> {
     const sqlStatements: string[] = [];
     data.forEach((pokemon) => {
       pokemon.Sprites.forEach((sprite) => {
-        const sql = `INSERT INTO POKEMON_SPRITES (name, url pokemon_id) VALUES ($'{sprite.name}', '${sprite.url}', ${pokemon.ID});\n`;
+        const sql = `INSERT INTO POKEMON_SPRITES (name, url, pokemon_id) VALUES ('${sprite.name}', '${sprite.url}', ${pokemon.ID});\n`;
         sqlStatements.push(sql);
       });
     });
