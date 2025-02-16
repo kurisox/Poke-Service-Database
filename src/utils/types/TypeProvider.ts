@@ -9,11 +9,15 @@ export default class TypeProvider
 {
   private logger: Logger;
   private typeArray: TypeData[];
-
+  
   constructor() {
     this.logger = log4js.getLogger("TypeProvider.ts");
     this.logger.level = "info";
     this.typeArray = [];
+  }
+
+  getData(): TypeData[] {
+    return this.typeArray;
   }
 
   public async fetchAllData() {
@@ -84,15 +88,9 @@ export default class TypeProvider
       .build();
 
     this.logger.info(`Successfully fetched type ${type.Id} - ${type.Name}`);
-    this.logger.info(
-      type.DamageRelations["double_damage_to"].map((relation) => relation.Name)
-    );
     this.typeArray.push(type);
   }
 
-  getData(): TypeData[] {
-    return this.typeArray;
-  }
 
   createSQLStatements(data: TypeData[]): string[] {
     const sqlStatements: string[] = [];
@@ -136,7 +134,7 @@ export default class TypeProvider
   private createTypeStatements(data: TypeData[]): string[] {
     const sqlStatements: string[] = [];
     data.forEach((type) => {
-      const sqlStatement: string = `INSERT INTO TYPES (id, type) VALUES (${type.Id}, '${type.Name}');\n`;
+      const sqlStatement: string = `INSERT INTO TYPES (id, name) VALUES (${type.Id}, '${type.Name}');\n`;
       sqlStatements.push(sqlStatement);
       this.logger.info(`SQL statement: ${sqlStatement} added to the list`);
     });
