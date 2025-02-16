@@ -11,7 +11,7 @@ RUN npm install
 COPY sql_init_script /app/sql_init_script
 COPY src /app/src
 
-RUN npm run dev
+RUN npm run build
 
 FROM mariadb:11.6.2 AS database
 
