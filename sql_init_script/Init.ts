@@ -3,10 +3,11 @@ import { fileURLToPath } from "url";
 import path from "path";
 import log4js, { Logger } from "log4js";
 
+import IDataServer from "../src/utils/interfaces/IDataServer.ts";
 import LanguagesProvider from "../src/utils/languages/LanguagesProvider.ts";
 import GenerationProvider from "../src/utils/generations/GenerationsProvider.ts";
 import TypeProvider from "../src/utils/types/TypeProvider.ts";
-import IFetching from "../src/utils/interfaces/IDataServer.ts";
+import AbilityProvider from "../src/utils/abilities/AbilityProvider.ts";
 
 class Init {
   private logger: Logger;
@@ -14,10 +15,11 @@ class Init {
   private readonly __dirname = path.dirname(this.__filename);
   private readonly initSqlPath = path.join(this.__dirname, "init.sql");
   private sqlStatements: string[];
-  private objects: IFetching<any>[];
+  private dataServer: IDataServer<any>[];
   private languagesProvider: LanguagesProvider;
   private generationProvider: GenerationProvider;
   private typeProvider: TypeProvider;
+  private abilityProvider: AbilityProvider;
 
   constructor(logLevel: string) {
     this.logger = log4js.getLogger("Init.ts");
@@ -26,20 +28,27 @@ class Init {
     this.__dirname = path.dirname(this.__filename);
     this.initSqlPath = path.join(this.__dirname, "init.sql");
     this.sqlStatements = [];
-    this.objects = [];
+    this.dataServer = [];
+    this.dataServer.push(
+      new LanguagesProvider(),
+      new GenerationProvider(),
+      new TypeProvider(),
+      new AbilityProvider()
+    );
     this.languagesProvider = new LanguagesProvider();
     this.generationProvider = new GenerationProvider();
     this.typeProvider = new TypeProvider();
-    this.objects.push(this.languagesProvider);
-    this.objects.push(this.generationProvider);
-    this.objects.push(this.typeProvider);
+    this.abilityProvider = new AbilityProvider();
   }
 
   private async prepareData() {
     try {
-      this.objects.forEach(element => {
-        element.fetchAllData();
-      });
+      this.logger.info("Preparing data");
+      await this.languagesProvider.fetchAllData();
+      await this.generationProvider.fetchAllData();
+      await this.typeProvider.fetchAllData();
+      await this.abilityProvider.fetchAllData();
+      this.logger.info("Data prepared");
     } catch (error) {
       this.logger.error(`Error preparing data: ${error}`);
     }
@@ -61,6 +70,15 @@ class Init {
       this.typeProvider.getData(),
       this.typeProvider.createSQLStatements.bind(this.typeProvider)
     );
+    this.abilityProvider.setData([
+      this.generationProvider.getData(),
+      this.languagesProvider.getData(),
+    ]);
+    this.collectStatements(
+      "ability",
+      this.abilityProvider.getData(),
+      this.abilityProvider.createSQLStatements.bind(this.abilityProvider)
+    );
   }
 
   private collectStatements<T>(
@@ -79,7 +97,6 @@ class Init {
     this.logger.info("Populating init.sql with statements");
     this.sqlStatements.forEach((statement: string) => {
       fs.appendFileSync(this.initSqlPath, statement);
-      this.logger.info(`Statement ${statement} added to init.sql`);
     });
     this.logger.info("init.sql populated with statements");
   }
