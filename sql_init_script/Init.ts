@@ -8,6 +8,7 @@ import LanguagesProvider from "../src/utils/languages/LanguagesProvider.ts";
 import GenerationProvider from "../src/utils/generations/GenerationsProvider.ts";
 import TypeProvider from "../src/utils/types/TypeProvider.ts";
 import AbilityProvider from "../src/utils/abilities/AbilityProvider.ts";
+import PokemonProvider from "../src/utils/pokemons/PokemonProvider.ts";
 
 class Init {
   private logger: Logger;
@@ -15,11 +16,11 @@ class Init {
   private readonly __dirname = path.dirname(this.__filename);
   private readonly initSqlPath = path.join(this.__dirname, "init.sql");
   private sqlStatements: string[];
-  private dataServer: IDataServer<any>[];
   private languagesProvider: LanguagesProvider;
   private generationProvider: GenerationProvider;
   private typeProvider: TypeProvider;
   private abilityProvider: AbilityProvider;
+  private pokemonProvider: PokemonProvider;
 
   constructor(logLevel: string) {
     this.logger = log4js.getLogger("Init.ts");
@@ -28,17 +29,11 @@ class Init {
     this.__dirname = path.dirname(this.__filename);
     this.initSqlPath = path.join(this.__dirname, "init.sql");
     this.sqlStatements = [];
-    this.dataServer = [];
-    this.dataServer.push(
-      new LanguagesProvider(),
-      new GenerationProvider(),
-      new TypeProvider(),
-      new AbilityProvider()
-    );
     this.languagesProvider = new LanguagesProvider();
     this.generationProvider = new GenerationProvider();
     this.typeProvider = new TypeProvider();
     this.abilityProvider = new AbilityProvider();
+    this.pokemonProvider = new PokemonProvider();
   }
 
   private async prepareData() {
@@ -48,6 +43,15 @@ class Init {
       await this.generationProvider.fetchAllData();
       await this.typeProvider.fetchAllData();
       await this.abilityProvider.fetchAllData();
+      await this.pokemonProvider.fetchAllData();
+      this.abilityProvider.setData([
+        this.generationProvider.getData(),
+        this.languagesProvider.getData(),
+      ]);
+      this.pokemonProvider.setData([
+        this.abilityProvider.getData(),
+        this.typeProvider.getData(),
+      ]);
       this.logger.info("Data prepared");
     } catch (error) {
       this.logger.error(`Error preparing data: ${error}`);
@@ -70,14 +74,16 @@ class Init {
       this.typeProvider.getData(),
       this.typeProvider.createSQLStatements.bind(this.typeProvider)
     );
-    this.abilityProvider.setData([
-      this.generationProvider.getData(),
-      this.languagesProvider.getData(),
-    ]);
+
     this.collectStatements(
       "ability",
       this.abilityProvider.getData(),
       this.abilityProvider.createSQLStatements.bind(this.abilityProvider)
+    );
+    this.collectStatements(
+      "pokemon",
+      this.pokemonProvider.getData(),
+      this.pokemonProvider.createSQLStatements.bind(this.pokemonProvider)
     );
   }
 
