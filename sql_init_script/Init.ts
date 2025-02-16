@@ -3,7 +3,6 @@ import { fileURLToPath } from "url";
 import path from "path";
 import log4js, { Logger } from "log4js";
 
-import IDataServer from "../src/utils/interfaces/IDataServer.ts";
 import LanguagesProvider from "../src/utils/languages/LanguagesProvider.ts";
 import GenerationProvider from "../src/utils/generations/GenerationsProvider.ts";
 import TypeProvider from "../src/utils/types/TypeProvider.ts";
