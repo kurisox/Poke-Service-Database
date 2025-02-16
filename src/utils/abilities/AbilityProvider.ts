@@ -138,7 +138,7 @@ export default class AbilityProvider implements IDataServer<AbilityData> {
           const sqlStatement: string = `INSERT INTO ABILITY_FLAVOUR_TEXTS (flavour_text, ability_id, language_id) VALUES ('${flavorText.flavour_text.replace(
             /'/g,
             "''"
-          )}}', ${ability.ID}, ${languagemap.get(flavorText.language)});\n`;
+          )}', ${ability.ID}, ${languagemap.get(flavorText.language)});\n`;
           sqlStatements.push(sqlStatement);
           this.logger.info(`SQL statement: ${sqlStatement} added to the list`);
         }
