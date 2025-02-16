@@ -15,6 +15,10 @@ export default class GenerationsProvider
     this.generationArray = [];
   }
 
+  getData(): GenerationData[] {
+    return this.generationArray;
+  }
+
   public async fetchAllData() {
     try {
       const generationData = await axios.get(
@@ -44,9 +48,6 @@ export default class GenerationsProvider
     });
   }
 
-  getData(): GenerationData[] {
-    return this.generationArray;
-  }
   createSQLStatements(data: GenerationData[]): string[] {
     const sqlStatements: string[] = [];
     data.forEach((generation) => {

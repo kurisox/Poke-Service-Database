@@ -15,6 +15,10 @@ export default class LanguagesProvider
     this.languageArray = [];
   }
 
+  public getData(): LanguageData[] {
+    return this.languageArray;
+  }
+
   public async fetchAllData() {
     try {
       const languageData = await axios.get(
@@ -44,14 +48,10 @@ export default class LanguagesProvider
     });
   }
 
-  public getData(): LanguageData[] {
-    return this.languageArray;
-  }
-
   public createSQLStatements(languages: LanguageData[]): string[] {
     const sqlStatements: string[] = [];
     languages.forEach((language) => {
-      const sqlStatement: string = `INSERT INTO LANGUAGES (id, name) VALUES (${language.ID}, '${language.Name}');\n`;
+      const sqlStatement: string = `INSERT INTO LANGUAGES (id, language) VALUES (${language.ID}, '${language.Name}');\n`;
       sqlStatements.push(sqlStatement);
       this.logger.info(`SQL statement: ${sqlStatement} added to the list`);
     });
